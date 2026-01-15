@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .logo {
+            animation: bounce 0.5s ease-in-out infinite;
+            transform-origin: center center;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-3px) rotate(-10deg); }
+            75% { transform: translateY(-3px) rotate(10deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .logo { animation: none; }
+        }
+    </style>
+    <g class="logo">
+        <!-- Zalando Orange Circle -->
+        <circle cx="16" cy="16" r="14" fill="#FF6900"/>
+        <!-- Stylized Z -->
+        <path d="M10 10 L22 10 L10 22 L22 22" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+</svg>
