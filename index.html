@@ -3,884 +3,747 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Favicon Demo - Zalando Lounge</title>
-
-    <!-- Dynamic favicon - will be replaced by JavaScript -->
+    <title>Animated Favicon Lab</title>
     <link id="favicon" rel="icon" type="image/png" href="assets/favicon_32.png">
-
     <style>
         :root {
             --primary: #ff6900;
-            --secondary: #1a1a2e;
-            --background: #0f0f23;
-            --text: #ffffff;
-            --card-bg: #1a1a2e;
-            --border: #333;
+            --bg: #0a0a15;
+            --card: #12121f;
+            --border: #2a2a3a;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--background);
-            color: var(--text);
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: #fff;
             min-height: 100vh;
-            padding: 2rem;
+            padding: 1.5rem;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
+        .container { max-width: 1400px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 2rem; }
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--primary), #ff9500);
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ff6900, #ff3366, #9933ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        .subtitle { color: #666; margin-top: 0.5rem; }
 
-        .subtitle {
-            color: #888;
-            font-size: 1.1rem;
-        }
-
-        .info-box {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .info-box h3 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .info-box ul {
-            margin-left: 1.5rem;
-            line-height: 1.8;
-        }
-
-        .demo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .demo-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
+        .master-controls {
+            background: linear-gradient(135deg, var(--card), #1a1a2a);
+            border: 2px solid var(--primary);
             border-radius: 12px;
             padding: 1.5rem;
-            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 2rem;
+            text-align: center;
         }
+        .master-controls h2 { margin-bottom: 1rem; font-size: 1.2rem; }
 
-        .demo-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 40px rgba(255, 105, 0, 0.2);
-        }
-
-        .demo-card h3 {
-            margin-bottom: 1rem;
+        .control-grid {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
             flex-wrap: wrap;
-        }
-
-        .badge {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-
-        .badge-simple { background: #22c55e; }
-        .badge-strong { background: #eab308; color: #000; }
-        .badge-disturbing { background: #ef4444; }
-        .badge-nightmare { background: #7c3aed; animation: nightmareBadge 0.5s infinite; }
-
-        @keyframes nightmareBadge {
-            0%, 100% { background: #7c3aed; }
-            50% { background: #dc2626; }
-        }
-
-        .preview-container {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            margin: 1.5rem 0;
-        }
-
-        .favicon-preview {
-            width: 64px;
-            height: 64px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            background: #fff;
-            display: flex;
-            align-items: center;
+            gap: 0.5rem;
             justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .favicon-preview canvas,
-        .favicon-preview svg,
-        .favicon-preview img {
-            width: 32px;
-            height: 32px;
-        }
-
-        .tab-preview {
-            background: #2a2a3e;
-            border-radius: 8px 8px 0 0;
-            padding: 0.5rem 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-        }
-
-        .tab-favicon {
-            width: 16px;
-            height: 16px;
-        }
-
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
+            margin-bottom: 1rem;
         }
 
         button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
+            background: var(--card);
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             transition: all 0.2s;
         }
+        button:hover { background: #1f1f30; transform: scale(1.02); }
+        button.active { border-color: var(--primary); box-shadow: 0 0 10px rgba(255,105,0,0.3); }
+        button.has-sound::after { content: " 🔊"; }
 
-        button:hover {
-            background: #ff8533;
-            transform: scale(1.02);
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        button.active {
-            box-shadow: 0 0 0 3px rgba(255, 105, 0, 0.5);
-        }
-
-        button.secondary {
-            background: var(--secondary);
-            border: 1px solid var(--border);
-        }
-
-        button.secondary:hover {
-            background: #252540;
-        }
-
-        button.nightmare-btn {
-            background: linear-gradient(45deg, #7c3aed, #dc2626);
-            animation: nightmareBtn 1s infinite;
-        }
-
-        @keyframes nightmareBtn {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.3); }
-        }
-
-        .slider-container {
+        .slider-row {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
             margin-top: 1rem;
         }
-
-        .slider-container label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #888;
-        }
-
+        .slider-group { display: flex; align-items: center; gap: 0.5rem; }
+        .slider-group label { color: #888; font-size: 0.85rem; }
         input[type="range"] {
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
+            width: 120px;
+            height: 6px;
+            border-radius: 3px;
             background: var(--border);
-            outline: none;
             -webkit-appearance: none;
         }
-
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background: var(--primary);
             cursor: pointer;
         }
 
-        .global-controls {
-            background: linear-gradient(135deg, var(--card-bg), #252540);
-            border: 2px solid var(--primary);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .global-controls h2 {
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .control-row {
+        .preview-strip {
             display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
+            align-items: center;
             justify-content: center;
-            margin-bottom: 1rem;
-        }
-
-        .warning {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid #ef4444;
-            border-radius: 6px;
-            padding: 1rem;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-        }
-
-        .nightmare-warning {
-            background: linear-gradient(45deg, rgba(124, 58, 237, 0.3), rgba(220, 38, 38, 0.3));
-            border: 2px solid #7c3aed;
-            animation: warningPulse 1s infinite;
-        }
-
-        @keyframes warningPulse {
-            0%, 100% { border-color: #7c3aed; }
-            50% { border-color: #dc2626; }
-        }
-
-        .browser-support {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 1rem;
             margin-top: 1rem;
-        }
-
-        .browser {
-            text-align: center;
             padding: 1rem;
-            background: rgba(255,255,255,0.05);
+            background: #1a1a2a;
             border-radius: 8px;
         }
+        .preview-strip canvas {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: #fff;
+        }
+        .preview-label { font-size: 0.75rem; color: #666; }
 
-        .browser-icon {
-            font-size: 2rem;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .card:hover { transform: translateY(-3px); border-color: #444; }
+        .card.active { border-color: var(--primary); }
+        .card h3 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card p { font-size: 0.75rem; color: #888; line-height: 1.4; }
+        .card canvas {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            background: #fff;
             margin-bottom: 0.5rem;
         }
 
-        .supported { color: #22c55e; }
-        .partial { color: #eab308; }
-        .unsupported { color: #ef4444; }
+        .badge {
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .badge-calm { background: #22c55e; }
+        .badge-medium { background: #eab308; color: #000; }
+        .badge-intense { background: #ef4444; }
+        .badge-chaos { background: linear-gradient(45deg, #9333ea, #ef4444); animation: chaosGlow 0.5s infinite; }
+        .badge-sound { background: #3b82f6; }
+
+        @keyframes chaosGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
+        }
+
+        .sound-indicator {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            display: none;
+            animation: pulse 0.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
 
         footer {
             text-align: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
+            margin-top: 2rem;
+            padding-top: 1rem;
             border-top: 1px solid var(--border);
-            color: #666;
-        }
-
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-            animation: statusPulse 1s infinite;
-        }
-
-        .status-active { background: #22c55e; }
-        .status-inactive { background: #666; animation: none; }
-
-        @keyframes statusPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            color: #444;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
+    <div class="sound-indicator" id="sound-indicator">🔊 Sound Active</div>
+
     <div class="container">
         <header>
-            <h1>Animated Favicon Demo</h1>
-            <p class="subtitle">Exploring favicon animations based on Zalando Lounge branding</p>
+            <h1>Animated Favicon Laboratory</h1>
+            <p class="subtitle">14 animation experiments - some with sound</p>
         </header>
 
-        <div class="info-box">
-            <h3>Key Findings from Research</h3>
-            <ul>
-                <li><strong>BIMI logos cannot be animated</strong> - They require SVG Tiny PS format which prohibits animations for security</li>
-                <li><strong>Favicons CAN be animated</strong> using JavaScript canvas manipulation (works in all browsers)</li>
-                <li><strong>Method:</strong> Replace the favicon link element with new data URL on each frame</li>
-                <li><strong>Performance:</strong> Throttled to ~30fps to avoid browser strain</li>
-            </ul>
-        </div>
+        <div class="master-controls">
+            <h2>🎛️ Master Controls</h2>
+            <div class="control-grid" id="button-grid"></div>
 
-        <div class="global-controls">
-            <h2><span class="status-indicator status-inactive" id="status-dot"></span>Favicon Animation Controls</h2>
-            <div class="control-row">
-                <button onclick="setAnimation('none')" class="secondary" id="btn-none">No Animation</button>
-                <button onclick="setAnimation('simple')" id="btn-simple">Simple (Pulse)</button>
-                <button onclick="setAnimation('strong')" id="btn-strong">Strong (Bounce)</button>
-                <button onclick="setAnimation('disturbing')" id="btn-disturbing">Disturbing (Strobe)</button>
-                <button onclick="setAnimation('nightmare')" id="btn-nightmare" class="nightmare-btn">NIGHTMARE</button>
-            </div>
-            <div class="slider-container">
-                <label>Animation Speed: <span id="speed-value">1.0x</span></label>
-                <input type="range" id="speed-slider" min="0.1" max="5" step="0.1" value="1" oninput="updateSpeed(this.value)">
-            </div>
-            <div class="tab-preview" style="max-width: 350px; margin: 1rem auto 0;">
-                <canvas id="tab-favicon-preview" class="tab-favicon" width="16" height="16"></canvas>
-                <span>Look at your browser tab!</span>
-            </div>
-        </div>
-
-        <div class="demo-grid">
-            <!-- Simple Animation -->
-            <div class="demo-card">
-                <h3>
-                    <span class="badge badge-simple">Simple</span>
-                    Gentle Pulse
-                </h3>
-                <p>Subtle breathing effect. Good for notifications.</p>
-
-                <div class="preview-container">
-                    <div class="favicon-preview">
-                        <canvas id="preview-simple" width="32" height="32"></canvas>
-                    </div>
-                    <div>
-                        <strong>Effect:</strong> Scale + Opacity<br>
-                        <strong>Intensity:</strong> Low
-                    </div>
+            <div class="slider-row">
+                <div class="slider-group">
+                    <label>Speed:</label>
+                    <input type="range" id="speed" min="0.1" max="5" step="0.1" value="1">
+                    <span id="speed-val">1.0x</span>
                 </div>
-
-                <div class="controls">
-                    <button onclick="setAnimation('simple')">Apply to Tab</button>
+                <div class="slider-group">
+                    <label>Intensity:</label>
+                    <input type="range" id="intensity" min="0.1" max="2" step="0.1" value="1">
+                    <span id="intensity-val">100%</span>
+                </div>
+                <div class="slider-group">
+                    <label>Volume:</label>
+                    <input type="range" id="volume" min="0" max="1" step="0.1" value="0.3">
+                    <span id="volume-val">30%</span>
                 </div>
             </div>
 
-            <!-- Strong Animation -->
-            <div class="demo-card">
-                <h3>
-                    <span class="badge badge-strong">Strong</span>
-                    Bounce & Spin
-                </h3>
-                <p>Noticeable movement for urgent notifications.</p>
-
-                <div class="preview-container">
-                    <div class="favicon-preview">
-                        <canvas id="preview-strong" width="32" height="32"></canvas>
-                    </div>
-                    <div>
-                        <strong>Effect:</strong> Bounce + Rotate<br>
-                        <strong>Intensity:</strong> Medium
-                    </div>
-                </div>
-
-                <div class="controls">
-                    <button onclick="setAnimation('strong')">Apply to Tab</button>
-                </div>
-            </div>
-
-            <!-- Disturbing Animation -->
-            <div class="demo-card">
-                <h3>
-                    <span class="badge badge-disturbing">Disturbing</span>
-                    Strobe & Shake
-                </h3>
-                <p>Color shifting and rapid shaking.</p>
-
-                <div class="preview-container">
-                    <div class="favicon-preview">
-                        <canvas id="preview-disturbing" width="32" height="32"></canvas>
-                    </div>
-                    <div>
-                        <strong>Effect:</strong> Hue shift + Shake<br>
-                        <strong>Intensity:</strong> High
-                    </div>
-                </div>
-
-                <div class="controls">
-                    <button onclick="setAnimation('disturbing')">Apply to Tab</button>
-                </div>
-
-                <div class="warning">
-                    <strong>Warning:</strong> May cause discomfort for photosensitive users.
-                </div>
-            </div>
-
-            <!-- NIGHTMARE Animation -->
-            <div class="demo-card" style="border-color: #7c3aed;">
-                <h3>
-                    <span class="badge badge-nightmare">NIGHTMARE</span>
-                    Total Chaos
-                </h3>
-                <p>Extreme multi-effect madness. For those who want to suffer.</p>
-
-                <div class="preview-container">
-                    <div class="favicon-preview" style="border-color: #7c3aed;">
-                        <canvas id="preview-nightmare" width="32" height="32"></canvas>
-                    </div>
-                    <div>
-                        <strong>Effect:</strong> EVERYTHING<br>
-                        <strong>Intensity:</strong> MAXIMUM
-                    </div>
-                </div>
-
-                <div class="controls">
-                    <button onclick="setAnimation('nightmare')" class="nightmare-btn">Unleash Chaos</button>
-                </div>
-
-                <div class="warning nightmare-warning">
-                    <strong>EXTREME WARNING:</strong> Combines rapid flashing, color inversion, glitch effects, shake, scale distortion, and frame skipping. NOT for the faint of heart. May cause headaches, eye strain, or existential dread.
-                </div>
-            </div>
-
-            <!-- Original Static -->
-            <div class="demo-card">
-                <h3>Original Static</h3>
-                <p>The original Zalando Lounge favicon.</p>
-
-                <div class="preview-container">
-                    <div class="favicon-preview">
-                        <img src="assets/favicon_32.png" alt="Original favicon" id="original-favicon">
-                    </div>
-                    <div>
-                        <strong>Source:</strong> mosaic01.ztat.net<br>
-                        <strong>Format:</strong> PNG 32x32
-                    </div>
-                </div>
-
-                <div class="controls">
-                    <button onclick="setAnimation('none')" class="secondary">Reset to Static</button>
-                </div>
+            <div class="preview-strip">
+                <div><canvas id="preview-16" width="16" height="16"></canvas><div class="preview-label">16px</div></div>
+                <div><canvas id="preview-32" width="32" height="32"></canvas><div class="preview-label">32px</div></div>
+                <div><canvas id="preview-64" width="64" height="64"></canvas><div class="preview-label">64px</div></div>
             </div>
         </div>
 
-        <div class="info-box">
-            <h3>Browser Support</h3>
-            <div class="browser-support">
-                <div class="browser">
-                    <div class="browser-icon">🦊</div>
-                    <div class="supported">Firefox</div>
-                    <small>Full support</small>
-                </div>
-                <div class="browser">
-                    <div class="browser-icon">🌐</div>
-                    <div class="supported">Chrome</div>
-                    <small>Full support</small>
-                </div>
-                <div class="browser">
-                    <div class="browser-icon">🧭</div>
-                    <div class="partial">Safari</div>
-                    <small>Partial</small>
-                </div>
-                <div class="browser">
-                    <div class="browser-icon">📘</div>
-                    <div class="supported">Edge</div>
-                    <small>Full support</small>
-                </div>
-            </div>
-        </div>
+        <div class="grid" id="card-grid"></div>
 
         <footer>
-            <p>Demo for animated favicon techniques | Zalando Lounge branding</p>
+            Favicon Animation Lab | Look at your browser tab!
         </footer>
     </div>
 
-    <script>
-        // Favicon animation system with proper link element replacement
-        const faviconImg = new Image();
-        faviconImg.crossOrigin = 'anonymous';
-        faviconImg.src = 'assets/favicon_64.png';
+<script>
+// Animation definitions
+const animations = [
+    { id: 'none', name: 'Static', desc: 'No animation', level: 'calm' },
+    { id: 'pulse', name: 'Pulse', desc: 'Gentle breathing effect', level: 'calm' },
+    { id: 'heartbeat', name: 'Heartbeat', desc: 'Double-beat like a real heart', level: 'calm' },
+    { id: 'spin', name: 'Spin', desc: 'Smooth 360° rotation', level: 'calm' },
+    { id: 'bounce', name: 'Bounce', desc: 'Bouncy jump animation', level: 'medium' },
+    { id: 'drunk', name: 'Drunk', desc: 'Wobbly swaying motion', level: 'medium' },
+    { id: 'glitch', name: 'Glitch', desc: 'RGB split + digital artifacts', level: 'medium' },
+    { id: 'fire', name: 'Fire', desc: 'Flickering flame colors', level: 'medium' },
+    { id: 'matrix', name: 'Matrix', desc: 'Falling green code rain', level: 'intense' },
+    { id: 'earthquake', name: 'Earthquake', desc: 'Violent shaking', level: 'intense' },
+    { id: 'meltdown', name: 'Meltdown', desc: 'Dripping distortion', level: 'intense' },
+    { id: 'possessed', name: 'Possessed', desc: 'Demonic transformation', level: 'chaos', sound: 'drone' },
+    { id: 'static', name: 'TV Death', desc: 'White noise takeover', level: 'chaos', sound: 'noise' },
+    { id: 'hypnotic', name: 'Hypnotic', desc: 'Spiral mind control', level: 'chaos', sound: 'pulse' },
+];
 
-        let currentAnimation = 'none';
-        let animationSpeed = 1;
-        let animationFrameIds = {};
-        let lastFaviconUpdate = 0;
-        const FAVICON_UPDATE_INTERVAL = 33; // ~30fps for favicon updates
+// State
+let currentAnim = 'none';
+let speed = 1;
+let intensity = 1;
+let volume = 0.3;
+let frameIds = {};
+let audioCtx = null;
+let currentSound = null;
 
-        // Wait for image to load
-        faviconImg.onload = function() {
-            console.log('Favicon image loaded successfully');
+// Load favicon image
+const favicon = new Image();
+favicon.crossOrigin = 'anonymous';
+favicon.src = 'assets/favicon_64.png';
 
-            // Initialize all preview canvases
-            initPreviewCanvas('preview-simple');
-            initPreviewCanvas('preview-strong');
-            initPreviewCanvas('preview-disturbing');
-            initPreviewCanvas('preview-nightmare');
-            initPreviewCanvas('tab-favicon-preview', 16);
+// Audio system
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+}
 
-            // Start all preview animations
-            startPreviewAnimation('simple', 'preview-simple');
-            startPreviewAnimation('strong', 'preview-strong');
-            startPreviewAnimation('disturbing', 'preview-disturbing');
-            startPreviewAnimation('nightmare', 'preview-nightmare');
-        };
+function playSound(type) {
+    stopSound();
+    const ctx = initAudio();
+    const gainNode = ctx.createGain();
+    gainNode.gain.value = volume * 0.5;
+    gainNode.connect(ctx.destination);
 
-        faviconImg.onerror = function() {
-            console.error('Failed to load favicon image');
-        };
+    document.getElementById('sound-indicator').style.display = 'block';
 
-        function initPreviewCanvas(canvasId, size = 32) {
-            const canvas = document.getElementById(canvasId);
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(faviconImg, 0, 0, size, size);
-            }
+    if (type === 'drone') {
+        // Creepy low drone
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        osc1.type = 'sawtooth';
+        osc2.type = 'sine';
+        osc1.frequency.value = 55;
+        osc2.frequency.value = 57;
+
+        const lfo = ctx.createOscillator();
+        const lfoGain = ctx.createGain();
+        lfo.frequency.value = 0.5;
+        lfoGain.gain.value = 10;
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc1.frequency);
+
+        osc1.connect(gainNode);
+        osc2.connect(gainNode);
+        osc1.start();
+        osc2.start();
+        lfo.start();
+
+        currentSound = { nodes: [osc1, osc2, lfo], gain: gainNode };
+    } else if (type === 'noise') {
+        // White noise
+        const bufferSize = 2 * ctx.sampleRate;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
         }
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        noise.loop = true;
 
-        function startPreviewAnimation(type, canvasId) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = 1000;
 
-            const ctx = canvas.getContext('2d');
-            const size = canvas.width;
-            let startTime = performance.now();
+        noise.connect(filter);
+        filter.connect(gainNode);
+        noise.start();
 
-            function animate(currentTime) {
-                const elapsed = (currentTime - startTime) / 1000 * animationSpeed;
+        currentSound = { nodes: [noise], gain: gainNode };
+    } else if (type === 'pulse') {
+        // Hypnotic pulsing tone
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = 432;
 
-                ctx.clearRect(0, 0, size, size);
-                ctx.save();
-                ctx.translate(size / 2, size / 2);
+        const lfo = ctx.createOscillator();
+        const lfoGain = ctx.createGain();
+        lfo.frequency.value = 2 * speed;
+        lfoGain.gain.value = 0.5;
+        lfo.connect(lfoGain);
+        lfoGain.connect(gainNode.gain);
 
-                applyAnimation(ctx, type, elapsed, size);
+        osc.connect(gainNode);
+        osc.start();
+        lfo.start();
 
-                ctx.drawImage(faviconImg, -size / 2, -size / 2, size, size);
-                ctx.restore();
+        currentSound = { nodes: [osc, lfo], gain: gainNode };
+    }
+}
 
-                // Apply post-processing effects
-                if (type === 'disturbing' || type === 'nightmare') {
-                    applyPostEffects(ctx, type, elapsed, size);
+function stopSound() {
+    document.getElementById('sound-indicator').style.display = 'none';
+    if (currentSound) {
+        currentSound.nodes.forEach(n => { try { n.stop(); } catch(e) {} });
+        currentSound = null;
+    }
+}
+
+function updateVolume(v) {
+    volume = v;
+    if (currentSound && currentSound.gain) {
+        currentSound.gain.gain.value = v * 0.5;
+    }
+}
+
+// Animation functions
+function applyAnimation(ctx, type, t, size) {
+    const i = intensity;
+    const half = size / 2;
+
+    switch(type) {
+        case 'pulse':
+            const ps = 0.85 + 0.15 * Math.sin(t * Math.PI) * i;
+            ctx.scale(ps, ps);
+            ctx.globalAlpha = 0.7 + 0.3 * Math.sin(t * Math.PI);
+            break;
+
+        case 'heartbeat':
+            const beat = t % 1;
+            let hs = 1;
+            if (beat < 0.1) hs = 1 + 0.2 * Math.sin(beat * 10 * Math.PI) * i;
+            else if (beat < 0.25) hs = 1 + 0.15 * Math.sin((beat - 0.1) * 6.67 * Math.PI) * i;
+            ctx.scale(hs, hs);
+            break;
+
+        case 'spin':
+            ctx.rotate(t * Math.PI * 2 * i);
+            break;
+
+        case 'bounce':
+            const by = -8 * Math.abs(Math.sin(t * 4 * Math.PI)) * i;
+            const bs = 1 + 0.1 * Math.abs(Math.sin(t * 4 * Math.PI)) * i;
+            ctx.translate(0, by);
+            ctx.scale(bs, 1/bs);
+            break;
+
+        case 'drunk':
+            const dx = Math.sin(t * 2) * 4 * i;
+            const dy = Math.cos(t * 3) * 2 * i;
+            const dr = Math.sin(t * 1.5) * 0.2 * i;
+            ctx.translate(dx, dy);
+            ctx.rotate(dr);
+            break;
+
+        case 'glitch':
+            if (Math.random() < 0.3 * i) {
+                ctx.translate((Math.random() - 0.5) * 8 * i, (Math.random() - 0.5) * 8 * i);
+            }
+            break;
+
+        case 'fire':
+            const fs = 0.95 + Math.random() * 0.1 * i;
+            ctx.scale(fs, fs);
+            ctx.translate((Math.random() - 0.5) * 2 * i, (Math.random() - 0.5) * 2 * i);
+            break;
+
+        case 'matrix':
+            // Just transform, overlay added in post
+            break;
+
+        case 'earthquake':
+            const ex = (Math.random() - 0.5) * 12 * i;
+            const ey = (Math.random() - 0.5) * 12 * i;
+            const er = (Math.random() - 0.5) * 0.3 * i;
+            ctx.translate(ex, ey);
+            ctx.rotate(er);
+            break;
+
+        case 'meltdown':
+            const skew = Math.sin(t * 2) * 0.3 * i;
+            ctx.transform(1, skew, 0, 1 + Math.abs(skew) * 0.5, 0, 0);
+            break;
+
+        case 'possessed':
+            const px = (Math.random() - 0.5) * 6 * i;
+            const py = (Math.random() - 0.5) * 6 * i;
+            ctx.translate(px, py);
+            if (Math.random() < 0.2) ctx.scale(-1, 1); // Random flip
+            break;
+
+        case 'static':
+            // Handled in post-processing
+            break;
+
+        case 'hypnotic':
+            const hr = t * Math.PI * i;
+            const hs = 0.9 + 0.1 * Math.sin(t * 4) * i;
+            ctx.rotate(hr);
+            ctx.scale(hs, hs);
+            break;
+    }
+}
+
+function applyPostEffects(ctx, type, t, size) {
+    try {
+        const imgData = ctx.getImageData(0, 0, size, size);
+        const d = imgData.data;
+        const i = intensity;
+
+        switch(type) {
+            case 'glitch':
+                // RGB split
+                const shift = Math.floor(Math.random() * 6 * i);
+                for (let j = 0; j < d.length - shift * 4; j += 4) {
+                    d[j] = d[j + shift * 4]; // Red channel shift
                 }
-
-                animationFrameIds[canvasId] = requestAnimationFrame(animate);
-            }
-
-            if (animationFrameIds[canvasId]) {
-                cancelAnimationFrame(animationFrameIds[canvasId]);
-            }
-            animate(performance.now());
-        }
-
-        function applyAnimation(ctx, type, elapsed, size) {
-            switch (type) {
-                case 'simple':
-                    const pulseScale = 0.85 + 0.15 * Math.sin(elapsed * Math.PI);
-                    const pulseOpacity = 0.7 + 0.3 * Math.sin(elapsed * Math.PI);
-                    ctx.scale(pulseScale, pulseScale);
-                    ctx.globalAlpha = pulseOpacity;
-                    break;
-
-                case 'strong':
-                    const bounceY = -6 * Math.abs(Math.sin(elapsed * 6 * Math.PI));
-                    const rotation = Math.sin(elapsed * 6 * Math.PI) * 0.4;
-                    const bounceScale = 1 + 0.1 * Math.abs(Math.sin(elapsed * 6 * Math.PI));
-                    ctx.translate(0, bounceY);
-                    ctx.rotate(rotation);
-                    ctx.scale(bounceScale, bounceScale);
-                    break;
-
-                case 'disturbing':
-                    const shakeX = (Math.random() - 0.5) * 8;
-                    const shakeY = (Math.random() - 0.5) * 8;
-                    const disturbScale = 0.9 + Math.random() * 0.2;
-                    ctx.translate(shakeX, shakeY);
-                    ctx.scale(disturbScale, disturbScale);
-                    ctx.rotate((Math.random() - 0.5) * 0.3);
-                    break;
-
-                case 'nightmare':
-                    // Extreme multi-effect chaos
-                    const chaos = Math.random();
-                    const nightmareShakeX = (Math.random() - 0.5) * 16;
-                    const nightmareShakeY = (Math.random() - 0.5) * 16;
-                    const nightmareScale = 0.5 + Math.random() * 1.0;
-                    const nightmareRotation = (Math.random() - 0.5) * Math.PI;
-                    const skewX = (Math.random() - 0.5) * 0.5;
-                    const skewY = (Math.random() - 0.5) * 0.5;
-
-                    ctx.translate(nightmareShakeX, nightmareShakeY);
-                    ctx.rotate(nightmareRotation);
-                    ctx.scale(nightmareScale, nightmareScale * (0.8 + Math.random() * 0.4));
-                    ctx.transform(1, skewX, skewY, 1, 0, 0);
-
-                    // Random opacity flicker
-                    ctx.globalAlpha = 0.3 + Math.random() * 0.7;
-                    break;
-            }
-        }
-
-        function applyPostEffects(ctx, type, elapsed, size) {
-            try {
-                const imageData = ctx.getImageData(0, 0, size, size);
-                const data = imageData.data;
-
-                if (type === 'disturbing') {
-                    // Hue rotation
-                    const hue = (elapsed * 360 * 5) % 360;
-                    shiftHue(data, hue);
-                } else if (type === 'nightmare') {
-                    // Random extreme effects
-                    const effect = Math.floor(Math.random() * 5);
-
-                    switch (effect) {
-                        case 0: // Color inversion
-                            for (let i = 0; i < data.length; i += 4) {
-                                data[i] = 255 - data[i];
-                                data[i + 1] = 255 - data[i + 1];
-                                data[i + 2] = 255 - data[i + 2];
-                            }
-                            break;
-                        case 1: // Extreme saturation
-                            shiftHue(data, Math.random() * 360);
-                            for (let i = 0; i < data.length; i += 4) {
-                                const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                                data[i] = Math.min(255, data[i] + (data[i] - avg) * 2);
-                                data[i + 1] = Math.min(255, data[i + 1] + (data[i + 1] - avg) * 2);
-                                data[i + 2] = Math.min(255, data[i + 2] + (data[i + 2] - avg) * 2);
-                            }
-                            break;
-                        case 2: // Glitch - channel shift
-                            const shift = Math.floor(Math.random() * 20);
-                            for (let i = 0; i < data.length - shift * 4; i += 4) {
-                                data[i] = data[i + shift * 4];
-                            }
-                            break;
-                        case 3: // Posterize
-                            const levels = 2 + Math.floor(Math.random() * 3);
-                            for (let i = 0; i < data.length; i += 4) {
-                                data[i] = Math.floor(data[i] / (256 / levels)) * (256 / levels);
-                                data[i + 1] = Math.floor(data[i + 1] / (256 / levels)) * (256 / levels);
-                                data[i + 2] = Math.floor(data[i + 2] / (256 / levels)) * (256 / levels);
-                            }
-                            break;
-                        case 4: // Scanlines + noise
-                            for (let i = 0; i < data.length; i += 4) {
-                                const y = Math.floor(i / 4 / size);
-                                if (y % 2 === 0) {
-                                    const noise = (Math.random() - 0.5) * 100;
-                                    data[i] = Math.min(255, Math.max(0, data[i] + noise));
-                                    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise));
-                                    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise));
-                                } else {
-                                    data[i] = data[i] * 0.5;
-                                    data[i + 1] = data[i + 1] * 0.5;
-                                    data[i + 2] = data[i + 2] * 0.5;
-                                }
-                            }
-                            break;
+                // Random scanlines
+                if (Math.random() < 0.5) {
+                    const y = Math.floor(Math.random() * size);
+                    for (let x = 0; x < size; x++) {
+                        const idx = (y * size + x) * 4;
+                        d[idx] = d[idx + 1] = d[idx + 2] = 255;
                     }
                 }
+                break;
 
-                ctx.putImageData(imageData, 0, 0);
-            } catch (e) {
-                // Canvas tainted - ignore
-            }
-        }
-
-        function shiftHue(data, hue) {
-            const hueRad = hue * Math.PI / 180;
-            const cos = Math.cos(hueRad);
-            const sin = Math.sin(hueRad);
-
-            for (let i = 0; i < data.length; i += 4) {
-                const r = data[i];
-                const g = data[i + 1];
-                const b = data[i + 2];
-
-                data[i] = Math.min(255, Math.max(0,
-                    r * (0.213 + cos * 0.787 - sin * 0.213) +
-                    g * (0.715 - cos * 0.715 - sin * 0.715) +
-                    b * (0.072 - cos * 0.072 + sin * 0.928)
-                ));
-                data[i + 1] = Math.min(255, Math.max(0,
-                    r * (0.213 - cos * 0.213 + sin * 0.143) +
-                    g * (0.715 + cos * 0.285 + sin * 0.140) +
-                    b * (0.072 - cos * 0.072 - sin * 0.283)
-                ));
-                data[i + 2] = Math.min(255, Math.max(0,
-                    r * (0.213 - cos * 0.213 - sin * 0.787) +
-                    g * (0.715 - cos * 0.715 + sin * 0.715) +
-                    b * (0.072 + cos * 0.928 + sin * 0.072)
-                ));
-            }
-        }
-
-        function setAnimation(type) {
-            currentAnimation = type;
-
-            // Update button states
-            document.querySelectorAll('.control-row button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            const activeBtn = document.getElementById(`btn-${type}`);
-            if (activeBtn) activeBtn.classList.add('active');
-
-            // Update status indicator
-            const statusDot = document.getElementById('status-dot');
-            if (type === 'none') {
-                statusDot.className = 'status-indicator status-inactive';
-            } else {
-                statusDot.className = 'status-indicator status-active';
-            }
-
-            if (type === 'none') {
-                // Stop animation and reset favicon
-                if (animationFrameIds['tab']) {
-                    cancelAnimationFrame(animationFrameIds['tab']);
-                    animationFrameIds['tab'] = null;
+            case 'fire':
+                // Warm color shift
+                for (let j = 0; j < d.length; j += 4) {
+                    d[j] = Math.min(255, d[j] * (1 + 0.3 * i)); // Boost red
+                    d[j + 1] = d[j + 1] * (0.8 + Math.random() * 0.2); // Vary green
+                    d[j + 2] = d[j + 2] * 0.5; // Reduce blue
                 }
-                resetFavicon();
+                break;
 
-                // Reset tab preview
-                const tabCanvas = document.getElementById('tab-favicon-preview');
-                const ctx = tabCanvas.getContext('2d');
-                ctx.clearRect(0, 0, 16, 16);
-                ctx.drawImage(faviconImg, 0, 0, 16, 16);
-            } else {
-                startTabFaviconAnimation(type);
-            }
+            case 'matrix':
+                // Green tint + falling chars
+                for (let j = 0; j < d.length; j += 4) {
+                    const lum = (d[j] + d[j+1] + d[j+2]) / 3;
+                    d[j] = lum * 0.2;
+                    d[j + 1] = Math.min(255, lum * 0.8 + 50);
+                    d[j + 2] = lum * 0.2;
+                }
+                // Add "rain" effect
+                for (let x = 0; x < size; x += 4) {
+                    const y = Math.floor((t * 50 + x * 7) % size);
+                    if (y < size) {
+                        const idx = (y * size + x) * 4;
+                        d[idx + 1] = 255; // Bright green
+                    }
+                }
+                break;
 
-            console.log('Animation set to:', type);
+            case 'meltdown':
+                // Vertical smear
+                for (let y = size - 1; y > 0; y--) {
+                    for (let x = 0; x < size; x++) {
+                        const idx = (y * size + x) * 4;
+                        const srcY = Math.max(0, y - Math.floor(Math.sin(x * 0.5 + t * 3) * 3 * i));
+                        const srcIdx = (srcY * size + x) * 4;
+                        const blend = 0.3 * i;
+                        d[idx] = d[idx] * (1 - blend) + d[srcIdx] * blend;
+                        d[idx + 1] = d[idx + 1] * (1 - blend) + d[srcIdx + 1] * blend;
+                        d[idx + 2] = d[idx + 2] * (1 - blend) + d[srcIdx + 2] * blend;
+                    }
+                }
+                break;
+
+            case 'possessed':
+                // Red tint + occasional invert
+                const invert = Math.random() < 0.1 * i;
+                for (let j = 0; j < d.length; j += 4) {
+                    if (invert) {
+                        d[j] = 255 - d[j];
+                        d[j + 1] = 255 - d[j + 1];
+                        d[j + 2] = 255 - d[j + 2];
+                    }
+                    d[j] = Math.min(255, d[j] * 1.3); // Red boost
+                    d[j + 2] = d[j + 2] * 0.7; // Blue reduce
+                }
+                // Draw "eyes" occasionally
+                if (Math.random() < 0.3) {
+                    const eyeY = Math.floor(size * 0.4);
+                    const eyeSize = Math.floor(size * 0.15);
+                    [0.3, 0.7].forEach(ex => {
+                        const eyeX = Math.floor(size * ex);
+                        for (let dy = -eyeSize; dy <= eyeSize; dy++) {
+                            for (let dx = -eyeSize; dx <= eyeSize; dx++) {
+                                if (dx*dx + dy*dy <= eyeSize*eyeSize) {
+                                    const idx = ((eyeY + dy) * size + eyeX + dx) * 4;
+                                    if (idx >= 0 && idx < d.length) {
+                                        d[idx] = 255; d[idx + 1] = 0; d[idx + 2] = 0;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                break;
+
+            case 'static':
+                // TV static overlay
+                const staticIntensity = 0.3 + 0.7 * i;
+                for (let j = 0; j < d.length; j += 4) {
+                    const noise = (Math.random() - 0.5) * 255 * staticIntensity;
+                    d[j] = Math.min(255, Math.max(0, d[j] + noise));
+                    d[j + 1] = Math.min(255, Math.max(0, d[j + 1] + noise));
+                    d[j + 2] = Math.min(255, Math.max(0, d[j + 2] + noise));
+                }
+                // Scanlines
+                for (let y = 0; y < size; y += 2) {
+                    for (let x = 0; x < size; x++) {
+                        const idx = (y * size + x) * 4;
+                        d[idx] *= 0.8; d[idx + 1] *= 0.8; d[idx + 2] *= 0.8;
+                    }
+                }
+                break;
+
+            case 'hypnotic':
+                // Spiral overlay
+                const cx = size / 2, cy = size / 2;
+                for (let y = 0; y < size; y++) {
+                    for (let x = 0; x < size; x++) {
+                        const dx = x - cx, dy = y - cy;
+                        const angle = Math.atan2(dy, dx);
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const spiral = Math.sin(angle * 3 + dist * 0.3 - t * 5) * 0.5 + 0.5;
+                        const idx = (y * size + x) * 4;
+                        const blend = spiral * 0.4 * i;
+                        d[idx] = d[idx] * (1 - blend) + 128 * blend;
+                        d[idx + 1] = d[idx + 1] * (1 - blend);
+                        d[idx + 2] = d[idx + 2] * (1 - blend) + 200 * blend;
+                    }
+                }
+                break;
         }
 
-        function startTabFaviconAnimation(type) {
-            // Canvas for generating favicon frames
-            const canvas = document.createElement('canvas');
-            canvas.width = 32;
-            canvas.height = 32;
+        ctx.putImageData(imgData, 0, 0);
+    } catch(e) {}
+}
+
+// Main animation loop
+function animate(canvasId, size) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let start = performance.now();
+
+    function frame(now) {
+        const t = (now - start) / 1000 * speed;
+
+        ctx.clearRect(0, 0, size, size);
+        ctx.save();
+        ctx.translate(size / 2, size / 2);
+
+        if (currentAnim !== 'none') {
+            applyAnimation(ctx, currentAnim, t, size);
+        }
+
+        ctx.drawImage(favicon, -size / 2, -size / 2, size, size);
+        ctx.restore();
+
+        if (currentAnim !== 'none' && ['glitch', 'fire', 'matrix', 'meltdown', 'possessed', 'static', 'hypnotic'].includes(currentAnim)) {
+            applyPostEffects(ctx, currentAnim, t, size);
+        }
+
+        frameIds[canvasId] = requestAnimationFrame(frame);
+    }
+
+    if (frameIds[canvasId]) cancelAnimationFrame(frameIds[canvasId]);
+    frame(performance.now());
+}
+
+// Favicon updater
+let lastUpdate = 0;
+function updateFavicon() {
+    const canvas = document.getElementById('preview-32');
+    const now = performance.now();
+    if (now - lastUpdate < 33) return; // 30fps limit
+    lastUpdate = now;
+
+    const dataUrl = canvas.toDataURL('image/png');
+    document.querySelectorAll("link[rel*='icon']").forEach(l => l.remove());
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.type = 'image/png';
+    link.href = dataUrl;
+    document.head.appendChild(link);
+}
+
+function startFaviconLoop() {
+    function loop() {
+        updateFavicon();
+        requestAnimationFrame(loop);
+    }
+    loop();
+}
+
+// Set animation
+function setAnimation(id) {
+    const anim = animations.find(a => a.id === id);
+    currentAnim = id;
+
+    // Update buttons
+    document.querySelectorAll('#button-grid button, .card').forEach(b => b.classList.remove('active'));
+    document.querySelector(`#btn-${id}`)?.classList.add('active');
+    document.querySelector(`#card-${id}`)?.classList.add('active');
+
+    // Handle sound
+    stopSound();
+    if (anim?.sound) {
+        playSound(anim.sound);
+    }
+}
+
+// Build UI
+function buildUI() {
+    const btnGrid = document.getElementById('button-grid');
+    const cardGrid = document.getElementById('card-grid');
+
+    animations.forEach(a => {
+        // Button
+        const btn = document.createElement('button');
+        btn.id = `btn-${a.id}`;
+        btn.textContent = a.name;
+        btn.onclick = () => setAnimation(a.id);
+        if (a.sound) btn.classList.add('has-sound');
+        if (a.id === 'none') btn.classList.add('active');
+        btnGrid.appendChild(btn);
+
+        // Card
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.id = `card-${a.id}`;
+        card.onclick = () => setAnimation(a.id);
+        if (a.id === 'none') card.classList.add('active');
+
+        const levelClass = { calm: 'badge-calm', medium: 'badge-medium', intense: 'badge-intense', chaos: 'badge-chaos' }[a.level];
+
+        card.innerHTML = `
+            <canvas id="preview-card-${a.id}" width="48" height="48"></canvas>
+            <h3>
+                <span class="badge ${levelClass}">${a.level}</span>
+                ${a.name}
+                ${a.sound ? '<span class="badge badge-sound">🔊</span>' : ''}
+            </h3>
+            <p>${a.desc}</p>
+        `;
+        cardGrid.appendChild(card);
+    });
+}
+
+// Init
+favicon.onload = () => {
+    buildUI();
+
+    // Start all card previews
+    animations.forEach(a => {
+        const canvas = document.getElementById(`preview-card-${a.id}`);
+        if (canvas) {
             const ctx = canvas.getContext('2d');
+            let start = performance.now();
 
-            // Tab preview canvas
-            const tabCanvas = document.getElementById('tab-favicon-preview');
-            const tabCtx = tabCanvas.getContext('2d');
-
-            let startTime = performance.now();
-            let frameCount = 0;
-
-            function animate(currentTime) {
-                const elapsed = (currentTime - startTime) / 1000 * animationSpeed;
-                frameCount++;
-
-                // Update main favicon canvas
-                ctx.clearRect(0, 0, 32, 32);
+            function cardFrame(now) {
+                const t = (now - start) / 1000 * speed;
+                ctx.clearRect(0, 0, 48, 48);
                 ctx.save();
-                ctx.translate(16, 16);
-                applyAnimation(ctx, type, elapsed, 32);
-                ctx.drawImage(faviconImg, -16, -16, 32, 32);
+                ctx.translate(24, 24);
+                if (a.id !== 'none') applyAnimation(ctx, a.id, t, 48);
+                ctx.drawImage(favicon, -24, -24, 48, 48);
                 ctx.restore();
-
-                // Apply post effects
-                if (type === 'disturbing' || type === 'nightmare') {
-                    applyPostEffects(ctx, type, elapsed, 32);
+                if (a.id !== 'none' && ['glitch', 'fire', 'matrix', 'meltdown', 'possessed', 'static', 'hypnotic'].includes(a.id)) {
+                    applyPostEffects(ctx, a.id, t, 48);
                 }
-
-                // Update tab preview
-                tabCtx.clearRect(0, 0, 16, 16);
-                tabCtx.drawImage(canvas, 0, 0, 16, 16);
-
-                // Update actual browser favicon (throttled)
-                if (currentTime - lastFaviconUpdate > FAVICON_UPDATE_INTERVAL) {
-                    updateBrowserFavicon(canvas);
-                    lastFaviconUpdate = currentTime;
-                }
-
-                animationFrameIds['tab'] = requestAnimationFrame(animate);
+                requestAnimationFrame(cardFrame);
             }
-
-            if (animationFrameIds['tab']) {
-                cancelAnimationFrame(animationFrameIds['tab']);
-            }
-            animate(performance.now());
+            cardFrame(performance.now());
         }
+    });
 
-        function updateBrowserFavicon(canvas) {
-            // Get data URL from canvas
-            const dataUrl = canvas.toDataURL('image/png');
+    // Start main previews
+    animate('preview-16', 16);
+    animate('preview-32', 32);
+    animate('preview-64', 64);
+    startFaviconLoop();
+};
 
-            // Remove existing favicon links
-            const existingLinks = document.querySelectorAll("link[rel*='icon']");
-            existingLinks.forEach(link => link.remove());
+// Slider handlers
+document.getElementById('speed').oninput = e => {
+    speed = parseFloat(e.target.value);
+    document.getElementById('speed-val').textContent = speed.toFixed(1) + 'x';
+};
+document.getElementById('intensity').oninput = e => {
+    intensity = parseFloat(e.target.value);
+    document.getElementById('intensity-val').textContent = Math.round(intensity * 100) + '%';
+};
+document.getElementById('volume').oninput = e => {
+    updateVolume(parseFloat(e.target.value));
+    document.getElementById('volume-val').textContent = Math.round(e.target.value * 100) + '%';
+};
 
-            // Create new favicon link
-            const newLink = document.createElement('link');
-            newLink.id = 'favicon';
-            newLink.rel = 'icon';
-            newLink.type = 'image/png';
-            newLink.href = dataUrl;
-
-            // Append to head
-            document.head.appendChild(newLink);
-        }
-
-        function resetFavicon() {
-            // Remove existing favicon links
-            const existingLinks = document.querySelectorAll("link[rel*='icon']");
-            existingLinks.forEach(link => link.remove());
-
-            // Create new static favicon link
-            const newLink = document.createElement('link');
-            newLink.id = 'favicon';
-            newLink.rel = 'icon';
-            newLink.type = 'image/png';
-            newLink.href = 'assets/favicon_32.png';
-
-            document.head.appendChild(newLink);
-        }
-
-        function updateSpeed(value) {
-            animationSpeed = parseFloat(value);
-            document.getElementById('speed-value').textContent = value + 'x';
-
-            // Restart animations with new speed
-            startPreviewAnimation('simple', 'preview-simple');
-            startPreviewAnimation('strong', 'preview-strong');
-            startPreviewAnimation('disturbing', 'preview-disturbing');
-            startPreviewAnimation('nightmare', 'preview-nightmare');
-
-            if (currentAnimation !== 'none') {
-                startTabFaviconAnimation(currentAnimation);
-            }
-        }
-
-        // Respect reduced motion preference (but allow override)
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            document.body.insertAdjacentHTML('afterbegin',
-                '<div class="warning" style="margin: 1rem 2rem;">Reduced motion preference detected. Animations available but not auto-started.</div>'
-            );
-        }
-    </script>
+// Cleanup on leave
+window.onbeforeunload = () => stopSound();
+</script>
 </body>
 </html>
