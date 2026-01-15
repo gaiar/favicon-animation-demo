@@ -121,7 +121,7 @@
 
     <div class="container">
         <h1>Favicon Animation Lab</h1>
-        <p class="subtitle">14 experiments - watch your browser tab!</p>
+        <p class="subtitle">15 experiments - watch your browser tab!</p>
 
         <div class="controls">
             <h2>Select Animation</h2>
@@ -164,7 +164,7 @@
         </div>
 
         <div class="info">
-            <strong>Animations:</strong> Static, Pulse, Heartbeat, Spin, Bounce, Drunk, Glitch, Fire, Matrix, Earthquake, Meltdown, Possessed🔊, TV Death🔊, Hypnotic🔊
+            <strong>Animations:</strong> Static, Pulse, Heartbeat, Spin, Bounce, Drunk, Glitch, Fire, Matrix, Earthquake, Meltdown, Possessed🔊, TV Death🔊, Hypnotic🔊, NIGHTMARE🔊
             <br><br>
             <strong>Note:</strong> Sound requires user interaction to start (browser security). The favicon in your browser tab updates in real-time!
         </div>
@@ -186,6 +186,7 @@ const ANIMS = [
     { id: 'possessed', name: 'Possessed', sound: 'drone', chaos: true },
     { id: 'static', name: 'TV Death', sound: 'noise', chaos: true },
     { id: 'hypnotic', name: 'Hypnotic', sound: 'pulse', chaos: true },
+    { id: 'nightmare', name: 'NIGHTMARE', sound: 'chaos', chaos: true },
 ];
 
 let current = 'none';
@@ -234,6 +235,33 @@ function playSound(type) {
         lfo.connect(lfoG); lfoG.connect(gain.gain);
         o.connect(gain); o.start(); lfo.start();
         soundNodes = [o, lfo, gain];
+    } else if (type === 'chaos') {
+        // Chaotic multi-oscillator madness
+        const oscs = [];
+        for (let j = 0; j < 4; j++) {
+            const o = audioCtx.createOscillator();
+            o.type = ['sawtooth', 'square', 'triangle', 'sine'][j];
+            o.frequency.value = 40 + Math.random() * 200;
+            o.connect(gain);
+            o.start();
+            oscs.push(o);
+            // Randomly modulate frequency
+            setInterval(() => {
+                if (o.frequency) o.frequency.value = 30 + Math.random() * 300;
+            }, 100);
+        }
+        // Add noise layer
+        const buf = audioCtx.createBuffer(1, audioCtx.sampleRate, audioCtx.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let j = 0; j < d.length; j++) d[j] = Math.random() * 2 - 1;
+        const noiseSrc = audioCtx.createBufferSource();
+        noiseSrc.buffer = buf; noiseSrc.loop = true;
+        const noiseGain = audioCtx.createGain();
+        noiseGain.gain.value = 0.3;
+        noiseSrc.connect(noiseGain);
+        noiseGain.connect(gain);
+        noiseSrc.start();
+        soundNodes = [...oscs, noiseSrc, gain];
     }
 }
 
@@ -312,13 +340,29 @@ function animate(ctx, type, t, sz) {
             const hypScale = 0.85 + 0.15 * Math.sin(t * 4);
             ctx.scale(hypScale, hypScale);
             break;
+        case 'nightmare':
+            // TOTAL CHAOS - everything at once
+            const nx = (Math.random() - 0.5) * 20 * i;
+            const ny = (Math.random() - 0.5) * 20 * i;
+            const nRot = (Math.random() - 0.5) * Math.PI * i;
+            const nScale = 0.3 + Math.random() * 1.2;
+            const nSkewX = (Math.random() - 0.5) * 0.8;
+            const nSkewY = (Math.random() - 0.5) * 0.8;
+            ctx.translate(nx, ny);
+            ctx.rotate(nRot);
+            ctx.scale(nScale, nScale * (0.5 + Math.random()));
+            ctx.transform(1, nSkewX, nSkewY, 1, 0, 0);
+            ctx.globalAlpha = 0.2 + Math.random() * 0.8;
+            if (Math.random() < 0.3) ctx.scale(-1, 1); // Random flip
+            if (Math.random() < 0.2) ctx.scale(1, -1); // Random vertical flip
+            break;
     }
 
     ctx.drawImage(img, -h, -h, sz, sz);
     ctx.restore();
 
     // Post effects
-    if (['glitch','fire','matrix','meltdown','possessed','static','hypnotic'].includes(type)) {
+    if (['glitch','fire','matrix','meltdown','possessed','static','hypnotic','nightmare'].includes(type)) {
         try {
             const imgData = ctx.getImageData(0, 0, sz, sz);
             const d = imgData.data;
@@ -389,6 +433,61 @@ function animate(ctx, type, t, sz) {
                         d[idx] = d[idx] * (1-sp*0.5*i) + 150 * sp * 0.5 * i;
                         d[idx+2] = d[idx+2] * (1-sp*0.5*i) + 200 * sp * 0.5 * i;
                     }
+                }
+            } else if (type === 'nightmare') {
+                // Random extreme effect each frame
+                const effect = Math.floor(Math.random() * 6);
+                switch(effect) {
+                    case 0: // Full invert
+                        for (let j = 0; j < d.length; j += 4) {
+                            d[j] = 255 - d[j];
+                            d[j+1] = 255 - d[j+1];
+                            d[j+2] = 255 - d[j+2];
+                        }
+                        break;
+                    case 1: // Extreme color shift
+                        const hue = Math.random() * 360;
+                        for (let j = 0; j < d.length; j += 4) {
+                            const temp = d[j];
+                            d[j] = d[j + (Math.floor(hue/120) % 3)];
+                            d[j+1] = d[j + ((Math.floor(hue/120) + 1) % 3)];
+                            d[j+2] = temp;
+                        }
+                        break;
+                    case 2: // Posterize extreme
+                        for (let j = 0; j < d.length; j += 4) {
+                            d[j] = Math.floor(d[j] / 128) * 255;
+                            d[j+1] = Math.floor(d[j+1] / 128) * 255;
+                            d[j+2] = Math.floor(d[j+2] / 128) * 255;
+                        }
+                        break;
+                    case 3: // Channel chaos
+                        const shift = Math.floor(Math.random() * 30);
+                        for (let j = 0; j < d.length - shift*4; j += 4) {
+                            d[j] = d[j + shift * 4];
+                            d[j+2] = d[Math.max(0, j - shift * 4) + 2];
+                        }
+                        break;
+                    case 4: // Scanline hell
+                        for (let y = 0; y < sz; y++) {
+                            if (Math.random() < 0.3) {
+                                for (let x = 0; x < sz; x++) {
+                                    const idx = (y * sz + x) * 4;
+                                    const v = Math.random() * 255;
+                                    d[idx] = v; d[idx+1] = v; d[idx+2] = v;
+                                }
+                            }
+                        }
+                        break;
+                    case 5: // Noise blast
+                        for (let j = 0; j < d.length; j += 4) {
+                            if (Math.random() < 0.4) {
+                                d[j] = Math.random() * 255;
+                                d[j+1] = Math.random() * 255;
+                                d[j+2] = Math.random() * 255;
+                            }
+                        }
+                        break;
                 }
             }
 
