@@ -288,6 +288,10 @@ function animate(ctx, type, t, sz) {
             ctx.translate((Math.random()-0.5) * 3 * i, (Math.random()-0.5) * 3 * i);
             ctx.scale(0.95 + Math.random() * 0.1, 0.95 + Math.random() * 0.1);
             break;
+        case 'matrix':
+            // Matrix just uses post-processing, but add subtle flicker
+            ctx.globalAlpha = 0.9 + Math.random() * 0.1;
+            break;
         case 'earthquake':
             ctx.translate((Math.random()-0.5) * 14 * i, (Math.random()-0.5) * 14 * i);
             ctx.rotate((Math.random()-0.5) * 0.4 * i);
@@ -328,9 +332,22 @@ function animate(ctx, type, t, sz) {
                     d[j+2] = d[j+2] * 0.4;
                 }
             } else if (type === 'matrix') {
+                // Green tint
                 for (let j = 0; j < d.length; j += 4) {
                     const l = (d[j] + d[j+1] + d[j+2]) / 3;
-                    d[j] = l * 0.2; d[j+1] = l * 0.9 + 40; d[j+2] = l * 0.2;
+                    d[j] = l * 0.1;
+                    d[j+1] = Math.min(255, l * 0.8 + 60);
+                    d[j+2] = l * 0.1;
+                }
+                // Falling rain columns
+                for (let x = 0; x < sz; x += 2) {
+                    const rainY = Math.floor((t * 40 + x * 13) % sz);
+                    for (let dy = 0; dy < 6; dy++) {
+                        const y = (rainY + dy) % sz;
+                        const idx = (y * sz + x) * 4;
+                        const brightness = 255 - dy * 40;
+                        d[idx + 1] = Math.min(255, d[idx + 1] + brightness);
+                    }
                 }
             } else if (type === 'meltdown') {
                 for (let y = sz-1; y > 0; y--) {
