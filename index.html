@@ -3,732 +3,451 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Favicon Lab</title>
+    <title>Favicon Animation Lab</title>
     <link id="favicon" rel="icon" type="image/png" href="assets/favicon_32.png">
     <style>
-        :root {
-            --primary: #ff6900;
-            --bg: #0a0a15;
-            --card: #12121f;
-            --border: #2a2a3a;
-        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: var(--bg);
+            font-family: system-ui, sans-serif;
+            background: #0a0a15;
             color: #fff;
             min-height: 100vh;
             padding: 1.5rem;
         }
-        .container { max-width: 1400px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 2rem; }
+        .container { max-width: 1000px; margin: 0 auto; }
         h1 {
-            font-size: 2rem;
-            background: linear-gradient(135deg, #ff6900, #ff3366, #9933ff);
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ff6900, #ff3366);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
-        .subtitle { color: #666; margin-top: 0.5rem; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 2rem; }
 
-        .master-controls {
-            background: linear-gradient(135deg, var(--card), #1a1a2a);
-            border: 2px solid var(--primary);
+        .controls {
+            background: #12121f;
+            border: 2px solid #ff6900;
             border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 2rem;
-            text-align: center;
         }
-        .master-controls h2 { margin-bottom: 1rem; font-size: 1.2rem; }
+        .controls h2 { text-align: center; margin-bottom: 1rem; font-size: 1rem; }
 
-        .control-grid {
+        .btn-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
             justify-content: center;
             margin-bottom: 1rem;
         }
-
         button {
-            background: var(--card);
+            background: #1a1a2a;
             color: #fff;
-            border: 1px solid var(--border);
-            padding: 0.5rem 1rem;
+            border: 1px solid #333;
+            padding: 0.5rem 0.8rem;
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.8rem;
-            transition: all 0.2s;
         }
-        button:hover { background: #1f1f30; transform: scale(1.02); }
-        button.active { border-color: var(--primary); box-shadow: 0 0 10px rgba(255,105,0,0.3); }
-        button.has-sound::after { content: " 🔊"; }
+        button:hover { background: #252535; }
+        button.active { border-color: #ff6900; box-shadow: 0 0 10px rgba(255,105,0,0.3); }
+        button.sound::after { content: " 🔊"; }
+        button.chaos { background: linear-gradient(45deg, #9333ea, #dc2626); }
 
-        .slider-row {
+        .sliders {
             display: flex;
             gap: 2rem;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 1rem;
+            margin: 1rem 0;
         }
-        .slider-group { display: flex; align-items: center; gap: 0.5rem; }
-        .slider-group label { color: #888; font-size: 0.85rem; }
-        input[type="range"] {
-            width: 120px;
-            height: 6px;
-            border-radius: 3px;
-            background: var(--border);
-            -webkit-appearance: none;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-        }
+        .slider { display: flex; align-items: center; gap: 0.5rem; }
+        .slider label { color: #888; font-size: 0.8rem; }
+        .slider input { width: 100px; }
+        .slider span { color: #ff6900; font-size: 0.8rem; min-width: 40px; }
 
-        .preview-strip {
+        .preview-row {
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 1rem;
+            align-items: center;
+            gap: 1.5rem;
             margin-top: 1rem;
             padding: 1rem;
             background: #1a1a2a;
             border-radius: 8px;
         }
-        .preview-strip canvas {
-            border: 1px solid var(--border);
+        .preview-item { text-align: center; }
+        .preview-item canvas {
+            background: #fff;
             border-radius: 4px;
-            background: #fff;
+            display: block;
+            margin: 0 auto 0.3rem;
         }
-        .preview-label { font-size: 0.75rem; color: #666; }
+        .preview-item small { color: #666; font-size: 0.7rem; }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
+        .info {
+            background: #12121f;
+            border: 1px solid #333;
+            border-radius: 8px;
             padding: 1rem;
-            transition: all 0.3s;
-            cursor: pointer;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #888;
         }
-        .card:hover { transform: translateY(-3px); border-color: #444; }
-        .card.active { border-color: var(--primary); }
-        .card h3 {
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .card p { font-size: 0.75rem; color: #888; line-height: 1.4; }
-        .card canvas {
-            width: 48px;
-            height: 48px;
-            border-radius: 6px;
-            background: #fff;
-            margin-bottom: 0.5rem;
-        }
+        .info strong { color: #ff6900; }
 
-        .badge {
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 3px;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-        .badge-calm { background: #22c55e; }
-        .badge-medium { background: #eab308; color: #000; }
-        .badge-intense { background: #ef4444; }
-        .badge-chaos { background: linear-gradient(45deg, #9333ea, #ef4444); animation: chaosGlow 0.5s infinite; }
-        .badge-sound { background: #3b82f6; }
-
-        @keyframes chaosGlow {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.5); }
-        }
-
-        .sound-indicator {
+        .sound-badge {
             position: fixed;
             top: 1rem;
             right: 1rem;
-            background: #ef4444;
-            color: white;
+            background: #dc2626;
             padding: 0.5rem 1rem;
             border-radius: 6px;
             font-size: 0.8rem;
             display: none;
-            animation: pulse 0.5s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
         }
 
-        footer {
+        #current-name {
             text-align: center;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-            color: #444;
-            font-size: 0.8rem;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            color: #ff6900;
         }
     </style>
 </head>
 <body>
-    <div class="sound-indicator" id="sound-indicator">🔊 Sound Active</div>
+    <div class="sound-badge" id="sound-badge">🔊 Sound Playing</div>
 
     <div class="container">
-        <header>
-            <h1>Animated Favicon Laboratory</h1>
-            <p class="subtitle">14 animation experiments - some with sound</p>
-        </header>
+        <h1>Favicon Animation Lab</h1>
+        <p class="subtitle">14 experiments - watch your browser tab!</p>
 
-        <div class="master-controls">
-            <h2>🎛️ Master Controls</h2>
-            <div class="control-grid" id="button-grid"></div>
+        <div class="controls">
+            <h2>Select Animation</h2>
+            <div class="btn-grid" id="buttons"></div>
 
-            <div class="slider-row">
-                <div class="slider-group">
+            <div id="current-name">Static</div>
+
+            <div class="sliders">
+                <div class="slider">
                     <label>Speed:</label>
-                    <input type="range" id="speed" min="0.1" max="5" step="0.1" value="1">
+                    <input type="range" id="speed" min="0.2" max="5" step="0.1" value="1">
                     <span id="speed-val">1.0x</span>
                 </div>
-                <div class="slider-group">
+                <div class="slider">
                     <label>Intensity:</label>
-                    <input type="range" id="intensity" min="0.1" max="2" step="0.1" value="1">
+                    <input type="range" id="intensity" min="0.2" max="2" step="0.1" value="1">
                     <span id="intensity-val">100%</span>
                 </div>
-                <div class="slider-group">
+                <div class="slider">
                     <label>Volume:</label>
                     <input type="range" id="volume" min="0" max="1" step="0.1" value="0.3">
                     <span id="volume-val">30%</span>
                 </div>
             </div>
 
-            <div class="preview-strip">
-                <div><canvas id="preview-16" width="16" height="16"></canvas><div class="preview-label">16px</div></div>
-                <div><canvas id="preview-32" width="32" height="32"></canvas><div class="preview-label">32px</div></div>
-                <div><canvas id="preview-64" width="64" height="64"></canvas><div class="preview-label">64px</div></div>
+            <div class="preview-row">
+                <div class="preview-item">
+                    <canvas id="preview-64" width="64" height="64"></canvas>
+                    <small>64px</small>
+                </div>
+                <div class="preview-item">
+                    <canvas id="preview-32" width="32" height="32"></canvas>
+                    <small>32px (favicon)</small>
+                </div>
+                <div class="preview-item">
+                    <canvas id="preview-16" width="16" height="16"></canvas>
+                    <small>16px</small>
+                </div>
             </div>
         </div>
 
-        <div class="grid" id="card-grid"></div>
-
-        <footer>
-            Favicon Animation Lab | Look at your browser tab!
-        </footer>
+        <div class="info">
+            <strong>Animations:</strong> Static, Pulse, Heartbeat, Spin, Bounce, Drunk, Glitch, Fire, Matrix, Earthquake, Meltdown, Possessed🔊, TV Death🔊, Hypnotic🔊
+            <br><br>
+            <strong>Note:</strong> Sound requires user interaction to start (browser security). The favicon in your browser tab updates in real-time!
+        </div>
     </div>
 
 <script>
-// Animation definitions
-const animations = [
-    { id: 'none', name: 'Static', desc: 'No animation', level: 'calm' },
-    { id: 'pulse', name: 'Pulse', desc: 'Gentle breathing effect', level: 'calm' },
-    { id: 'heartbeat', name: 'Heartbeat', desc: 'Double-beat like a real heart', level: 'calm' },
-    { id: 'spin', name: 'Spin', desc: 'Smooth 360° rotation', level: 'calm' },
-    { id: 'bounce', name: 'Bounce', desc: 'Bouncy jump animation', level: 'medium' },
-    { id: 'drunk', name: 'Drunk', desc: 'Wobbly swaying motion', level: 'medium' },
-    { id: 'glitch', name: 'Glitch', desc: 'RGB split + digital artifacts', level: 'medium' },
-    { id: 'fire', name: 'Fire', desc: 'Flickering flame colors', level: 'medium' },
-    { id: 'matrix', name: 'Matrix', desc: 'Falling green code rain', level: 'intense' },
-    { id: 'earthquake', name: 'Earthquake', desc: 'Violent shaking', level: 'intense' },
-    { id: 'meltdown', name: 'Meltdown', desc: 'Dripping distortion', level: 'intense' },
-    { id: 'possessed', name: 'Possessed', desc: 'Demonic transformation', level: 'chaos', sound: 'drone' },
-    { id: 'static', name: 'TV Death', desc: 'White noise takeover', level: 'chaos', sound: 'noise' },
-    { id: 'hypnotic', name: 'Hypnotic', desc: 'Spiral mind control', level: 'chaos', sound: 'pulse' },
+const ANIMS = [
+    { id: 'none', name: 'Static' },
+    { id: 'pulse', name: 'Pulse' },
+    { id: 'heartbeat', name: 'Heartbeat' },
+    { id: 'spin', name: 'Spin' },
+    { id: 'bounce', name: 'Bounce' },
+    { id: 'drunk', name: 'Drunk' },
+    { id: 'glitch', name: 'Glitch' },
+    { id: 'fire', name: 'Fire' },
+    { id: 'matrix', name: 'Matrix' },
+    { id: 'earthquake', name: 'Earthquake' },
+    { id: 'meltdown', name: 'Meltdown' },
+    { id: 'possessed', name: 'Possessed', sound: 'drone', chaos: true },
+    { id: 'static', name: 'TV Death', sound: 'noise', chaos: true },
+    { id: 'hypnotic', name: 'Hypnotic', sound: 'pulse', chaos: true },
 ];
 
-// State
-let currentAnim = 'none';
+let current = 'none';
 let speed = 1;
 let intensity = 1;
 let volume = 0.3;
-let frameIds = {};
-let audioCtx = null;
-let currentSound = null;
+let audioCtx, soundNodes;
 
-// Load favicon image
-const favicon = new Image();
-favicon.crossOrigin = 'anonymous';
-favicon.src = 'assets/favicon_64.png';
+const img = new Image();
+img.crossOrigin = 'anonymous';
+img.src = 'assets/favicon_64.png';
 
-// Audio system
-function initAudio() {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    return audioCtx;
-}
-
+// Audio
 function playSound(type) {
     stopSound();
-    const ctx = initAudio();
-    const gainNode = ctx.createGain();
-    gainNode.gain.value = volume * 0.5;
-    gainNode.connect(ctx.destination);
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    document.getElementById('sound-indicator').style.display = 'block';
+    const gain = audioCtx.createGain();
+    gain.gain.value = volume * 0.4;
+    gain.connect(audioCtx.destination);
+
+    document.getElementById('sound-badge').style.display = 'block';
 
     if (type === 'drone') {
-        // Creepy low drone
-        const osc1 = ctx.createOscillator();
-        const osc2 = ctx.createOscillator();
-        osc1.type = 'sawtooth';
-        osc2.type = 'sine';
-        osc1.frequency.value = 55;
-        osc2.frequency.value = 57;
-
-        const lfo = ctx.createOscillator();
-        const lfoGain = ctx.createGain();
-        lfo.frequency.value = 0.5;
-        lfoGain.gain.value = 10;
-        lfo.connect(lfoGain);
-        lfoGain.connect(osc1.frequency);
-
-        osc1.connect(gainNode);
-        osc2.connect(gainNode);
-        osc1.start();
-        osc2.start();
-        lfo.start();
-
-        currentSound = { nodes: [osc1, osc2, lfo], gain: gainNode };
+        const o1 = audioCtx.createOscillator();
+        const o2 = audioCtx.createOscillator();
+        o1.type = 'sawtooth'; o1.frequency.value = 55;
+        o2.type = 'sine'; o2.frequency.value = 58;
+        o1.connect(gain); o2.connect(gain);
+        o1.start(); o2.start();
+        soundNodes = [o1, o2, gain];
     } else if (type === 'noise') {
-        // White noise
-        const bufferSize = 2 * ctx.sampleRate;
-        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
-        const noise = ctx.createBufferSource();
-        noise.buffer = buffer;
-        noise.loop = true;
-
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'highpass';
-        filter.frequency.value = 1000;
-
-        noise.connect(filter);
-        filter.connect(gainNode);
-        noise.start();
-
-        currentSound = { nodes: [noise], gain: gainNode };
+        const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf; src.loop = true;
+        src.connect(gain); src.start();
+        soundNodes = [src, gain];
     } else if (type === 'pulse') {
-        // Hypnotic pulsing tone
-        const osc = ctx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.value = 432;
-
-        const lfo = ctx.createOscillator();
-        const lfoGain = ctx.createGain();
-        lfo.frequency.value = 2 * speed;
-        lfoGain.gain.value = 0.5;
-        lfo.connect(lfoGain);
-        lfoGain.connect(gainNode.gain);
-
-        osc.connect(gainNode);
-        osc.start();
-        lfo.start();
-
-        currentSound = { nodes: [osc, lfo], gain: gainNode };
+        const o = audioCtx.createOscillator();
+        o.type = 'sine'; o.frequency.value = 432;
+        const lfo = audioCtx.createOscillator();
+        const lfoG = audioCtx.createGain();
+        lfo.frequency.value = 2; lfoG.gain.value = 0.4;
+        lfo.connect(lfoG); lfoG.connect(gain.gain);
+        o.connect(gain); o.start(); lfo.start();
+        soundNodes = [o, lfo, gain];
     }
 }
 
 function stopSound() {
-    document.getElementById('sound-indicator').style.display = 'none';
-    if (currentSound) {
-        currentSound.nodes.forEach(n => { try { n.stop(); } catch(e) {} });
-        currentSound = null;
+    document.getElementById('sound-badge').style.display = 'none';
+    if (soundNodes) {
+        soundNodes.forEach(n => { try { n.stop ? n.stop() : null; } catch(e){} });
+        soundNodes = null;
     }
 }
 
-function updateVolume(v) {
-    volume = v;
-    if (currentSound && currentSound.gain) {
-        currentSound.gain.gain.value = v * 0.5;
-    }
-}
-
-// Animation functions
-function applyAnimation(ctx, type, t, size) {
+// Animations
+function animate(ctx, type, t, sz) {
     const i = intensity;
-    const half = size / 2;
+    const h = sz / 2;
+
+    ctx.clearRect(0, 0, sz, sz);
+    ctx.save();
+    ctx.translate(h, h);
 
     switch(type) {
         case 'pulse':
-            const ps = 0.85 + 0.15 * Math.sin(t * Math.PI) * i;
+            const ps = 0.8 + 0.2 * Math.sin(t * Math.PI) * i;
             ctx.scale(ps, ps);
-            ctx.globalAlpha = 0.7 + 0.3 * Math.sin(t * Math.PI);
+            ctx.globalAlpha = 0.6 + 0.4 * Math.sin(t * Math.PI);
             break;
-
         case 'heartbeat':
-            const beat = t % 1;
+            const b = t % 1;
             let hs = 1;
-            if (beat < 0.1) hs = 1 + 0.2 * Math.sin(beat * 10 * Math.PI) * i;
-            else if (beat < 0.25) hs = 1 + 0.15 * Math.sin((beat - 0.1) * 6.67 * Math.PI) * i;
+            if (b < 0.1) hs = 1 + 0.25 * Math.sin(b * 10 * Math.PI) * i;
+            else if (b < 0.3) hs = 1 + 0.15 * Math.sin((b-0.1) * 5 * Math.PI) * i;
             ctx.scale(hs, hs);
             break;
-
         case 'spin':
             ctx.rotate(t * Math.PI * 2 * i);
             break;
-
         case 'bounce':
-            const by = -8 * Math.abs(Math.sin(t * 4 * Math.PI)) * i;
-            const bs = 1 + 0.1 * Math.abs(Math.sin(t * 4 * Math.PI)) * i;
-            ctx.translate(0, by);
+            ctx.translate(0, -8 * Math.abs(Math.sin(t * 4 * Math.PI)) * i);
+            const bs = 1 + 0.15 * Math.abs(Math.sin(t * 4 * Math.PI)) * i;
             ctx.scale(bs, 1/bs);
             break;
-
         case 'drunk':
-            const dx = Math.sin(t * 2) * 4 * i;
-            const dy = Math.cos(t * 3) * 2 * i;
-            const dr = Math.sin(t * 1.5) * 0.2 * i;
-            ctx.translate(dx, dy);
-            ctx.rotate(dr);
+            ctx.translate(Math.sin(t * 2) * 5 * i, Math.cos(t * 3) * 3 * i);
+            ctx.rotate(Math.sin(t * 1.5) * 0.25 * i);
             break;
-
         case 'glitch':
-            if (Math.random() < 0.3 * i) {
-                ctx.translate((Math.random() - 0.5) * 8 * i, (Math.random() - 0.5) * 8 * i);
+            if (Math.random() < 0.4 * i) {
+                ctx.translate((Math.random()-0.5) * 10 * i, (Math.random()-0.5) * 10 * i);
             }
             break;
-
         case 'fire':
-            const fs = 0.95 + Math.random() * 0.1 * i;
-            ctx.scale(fs, fs);
-            ctx.translate((Math.random() - 0.5) * 2 * i, (Math.random() - 0.5) * 2 * i);
+            ctx.translate((Math.random()-0.5) * 3 * i, (Math.random()-0.5) * 3 * i);
+            ctx.scale(0.95 + Math.random() * 0.1, 0.95 + Math.random() * 0.1);
             break;
-
-        case 'matrix':
-            // Just transform, overlay added in post
-            break;
-
         case 'earthquake':
-            const ex = (Math.random() - 0.5) * 12 * i;
-            const ey = (Math.random() - 0.5) * 12 * i;
-            const er = (Math.random() - 0.5) * 0.3 * i;
-            ctx.translate(ex, ey);
-            ctx.rotate(er);
+            ctx.translate((Math.random()-0.5) * 14 * i, (Math.random()-0.5) * 14 * i);
+            ctx.rotate((Math.random()-0.5) * 0.4 * i);
             break;
-
         case 'meltdown':
-            const skew = Math.sin(t * 2) * 0.3 * i;
-            ctx.transform(1, skew, 0, 1 + Math.abs(skew) * 0.5, 0, 0);
+            const sk = Math.sin(t * 2) * 0.4 * i;
+            ctx.transform(1, sk, 0, 1 + Math.abs(sk) * 0.5, 0, 0);
             break;
-
         case 'possessed':
-            const px = (Math.random() - 0.5) * 6 * i;
-            const py = (Math.random() - 0.5) * 6 * i;
-            ctx.translate(px, py);
-            if (Math.random() < 0.2) ctx.scale(-1, 1); // Random flip
+            ctx.translate((Math.random()-0.5) * 8 * i, (Math.random()-0.5) * 8 * i);
+            if (Math.random() < 0.15) ctx.scale(-1, 1);
             break;
-
         case 'static':
-            // Handled in post-processing
+            ctx.translate((Math.random()-0.5) * 4, (Math.random()-0.5) * 4);
             break;
-
         case 'hypnotic':
-            const hr = t * Math.PI * i;
-            const hs = 0.9 + 0.1 * Math.sin(t * 4) * i;
-            ctx.rotate(hr);
-            ctx.scale(hs, hs);
+            ctx.rotate(t * Math.PI * i);
+            const hypScale = 0.85 + 0.15 * Math.sin(t * 4);
+            ctx.scale(hypScale, hypScale);
             break;
     }
-}
 
-function applyPostEffects(ctx, type, t, size) {
-    try {
-        const imgData = ctx.getImageData(0, 0, size, size);
-        const d = imgData.data;
-        const i = intensity;
+    ctx.drawImage(img, -h, -h, sz, sz);
+    ctx.restore();
 
-        switch(type) {
-            case 'glitch':
-                // RGB split
-                const shift = Math.floor(Math.random() * 6 * i);
-                for (let j = 0; j < d.length - shift * 4; j += 4) {
-                    d[j] = d[j + shift * 4]; // Red channel shift
-                }
-                // Random scanlines
-                if (Math.random() < 0.5) {
-                    const y = Math.floor(Math.random() * size);
-                    for (let x = 0; x < size; x++) {
-                        const idx = (y * size + x) * 4;
-                        d[idx] = d[idx + 1] = d[idx + 2] = 255;
-                    }
-                }
-                break;
+    // Post effects
+    if (['glitch','fire','matrix','meltdown','possessed','static','hypnotic'].includes(type)) {
+        try {
+            const imgData = ctx.getImageData(0, 0, sz, sz);
+            const d = imgData.data;
 
-            case 'fire':
-                // Warm color shift
+            if (type === 'glitch') {
+                const shift = Math.floor(Math.random() * 8 * i);
+                for (let j = 0; j < d.length - shift*4; j += 4) d[j] = d[j + shift*4];
+            } else if (type === 'fire') {
                 for (let j = 0; j < d.length; j += 4) {
-                    d[j] = Math.min(255, d[j] * (1 + 0.3 * i)); // Boost red
-                    d[j + 1] = d[j + 1] * (0.8 + Math.random() * 0.2); // Vary green
-                    d[j + 2] = d[j + 2] * 0.5; // Reduce blue
+                    d[j] = Math.min(255, d[j] * 1.4);
+                    d[j+2] = d[j+2] * 0.4;
                 }
-                break;
-
-            case 'matrix':
-                // Green tint + falling chars
+            } else if (type === 'matrix') {
                 for (let j = 0; j < d.length; j += 4) {
-                    const lum = (d[j] + d[j+1] + d[j+2]) / 3;
-                    d[j] = lum * 0.2;
-                    d[j + 1] = Math.min(255, lum * 0.8 + 50);
-                    d[j + 2] = lum * 0.2;
+                    const l = (d[j] + d[j+1] + d[j+2]) / 3;
+                    d[j] = l * 0.2; d[j+1] = l * 0.9 + 40; d[j+2] = l * 0.2;
                 }
-                // Add "rain" effect
-                for (let x = 0; x < size; x += 4) {
-                    const y = Math.floor((t * 50 + x * 7) % size);
-                    if (y < size) {
-                        const idx = (y * size + x) * 4;
-                        d[idx + 1] = 255; // Bright green
+            } else if (type === 'meltdown') {
+                for (let y = sz-1; y > 0; y--) {
+                    for (let x = 0; x < sz; x++) {
+                        const idx = (y * sz + x) * 4;
+                        const srcY = Math.max(0, y - Math.floor(Math.sin(x*0.5+t*3) * 4 * i));
+                        const srcIdx = (srcY * sz + x) * 4;
+                        d[idx] = d[idx]*0.7 + d[srcIdx]*0.3;
+                        d[idx+1] = d[idx+1]*0.7 + d[srcIdx+1]*0.3;
+                        d[idx+2] = d[idx+2]*0.7 + d[srcIdx+2]*0.3;
                     }
                 }
-                break;
-
-            case 'meltdown':
-                // Vertical smear
-                for (let y = size - 1; y > 0; y--) {
-                    for (let x = 0; x < size; x++) {
-                        const idx = (y * size + x) * 4;
-                        const srcY = Math.max(0, y - Math.floor(Math.sin(x * 0.5 + t * 3) * 3 * i));
-                        const srcIdx = (srcY * size + x) * 4;
-                        const blend = 0.3 * i;
-                        d[idx] = d[idx] * (1 - blend) + d[srcIdx] * blend;
-                        d[idx + 1] = d[idx + 1] * (1 - blend) + d[srcIdx + 1] * blend;
-                        d[idx + 2] = d[idx + 2] * (1 - blend) + d[srcIdx + 2] * blend;
+            } else if (type === 'possessed') {
+                if (Math.random() < 0.15 * i) {
+                    for (let j = 0; j < d.length; j += 4) {
+                        d[j] = 255-d[j]; d[j+1] = 255-d[j+1]; d[j+2] = 255-d[j+2];
                     }
                 }
-                break;
-
-            case 'possessed':
-                // Red tint + occasional invert
-                const invert = Math.random() < 0.1 * i;
                 for (let j = 0; j < d.length; j += 4) {
-                    if (invert) {
-                        d[j] = 255 - d[j];
-                        d[j + 1] = 255 - d[j + 1];
-                        d[j + 2] = 255 - d[j + 2];
-                    }
-                    d[j] = Math.min(255, d[j] * 1.3); // Red boost
-                    d[j + 2] = d[j + 2] * 0.7; // Blue reduce
+                    d[j] = Math.min(255, d[j] * 1.3);
+                    d[j+2] = d[j+2] * 0.6;
                 }
-                // Draw "eyes" occasionally
-                if (Math.random() < 0.3) {
-                    const eyeY = Math.floor(size * 0.4);
-                    const eyeSize = Math.floor(size * 0.15);
-                    [0.3, 0.7].forEach(ex => {
-                        const eyeX = Math.floor(size * ex);
-                        for (let dy = -eyeSize; dy <= eyeSize; dy++) {
-                            for (let dx = -eyeSize; dx <= eyeSize; dx++) {
-                                if (dx*dx + dy*dy <= eyeSize*eyeSize) {
-                                    const idx = ((eyeY + dy) * size + eyeX + dx) * 4;
-                                    if (idx >= 0 && idx < d.length) {
-                                        d[idx] = 255; d[idx + 1] = 0; d[idx + 2] = 0;
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-                break;
-
-            case 'static':
-                // TV static overlay
-                const staticIntensity = 0.3 + 0.7 * i;
+            } else if (type === 'static') {
                 for (let j = 0; j < d.length; j += 4) {
-                    const noise = (Math.random() - 0.5) * 255 * staticIntensity;
-                    d[j] = Math.min(255, Math.max(0, d[j] + noise));
-                    d[j + 1] = Math.min(255, Math.max(0, d[j + 1] + noise));
-                    d[j + 2] = Math.min(255, Math.max(0, d[j + 2] + noise));
+                    const n = (Math.random()-0.5) * 200 * i;
+                    d[j] = Math.max(0, Math.min(255, d[j]+n));
+                    d[j+1] = Math.max(0, Math.min(255, d[j+1]+n));
+                    d[j+2] = Math.max(0, Math.min(255, d[j+2]+n));
                 }
-                // Scanlines
-                for (let y = 0; y < size; y += 2) {
-                    for (let x = 0; x < size; x++) {
-                        const idx = (y * size + x) * 4;
-                        d[idx] *= 0.8; d[idx + 1] *= 0.8; d[idx + 2] *= 0.8;
+            } else if (type === 'hypnotic') {
+                const cx = sz/2, cy = sz/2;
+                for (let y = 0; y < sz; y++) {
+                    for (let x = 0; x < sz; x++) {
+                        const dx = x-cx, dy = y-cy;
+                        const ang = Math.atan2(dy, dx);
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        const sp = Math.sin(ang*4 + dist*0.4 - t*6) * 0.5 + 0.5;
+                        const idx = (y*sz + x) * 4;
+                        d[idx] = d[idx] * (1-sp*0.5*i) + 150 * sp * 0.5 * i;
+                        d[idx+2] = d[idx+2] * (1-sp*0.5*i) + 200 * sp * 0.5 * i;
                     }
                 }
-                break;
+            }
 
-            case 'hypnotic':
-                // Spiral overlay
-                const cx = size / 2, cy = size / 2;
-                for (let y = 0; y < size; y++) {
-                    for (let x = 0; x < size; x++) {
-                        const dx = x - cx, dy = y - cy;
-                        const angle = Math.atan2(dy, dx);
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        const spiral = Math.sin(angle * 3 + dist * 0.3 - t * 5) * 0.5 + 0.5;
-                        const idx = (y * size + x) * 4;
-                        const blend = spiral * 0.4 * i;
-                        d[idx] = d[idx] * (1 - blend) + 128 * blend;
-                        d[idx + 1] = d[idx + 1] * (1 - blend);
-                        d[idx + 2] = d[idx + 2] * (1 - blend) + 200 * blend;
-                    }
-                }
-                break;
-        }
-
-        ctx.putImageData(imgData, 0, 0);
-    } catch(e) {}
-}
-
-// Main animation loop
-function animate(canvasId, size) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let start = performance.now();
-
-    function frame(now) {
-        const t = (now - start) / 1000 * speed;
-
-        ctx.clearRect(0, 0, size, size);
-        ctx.save();
-        ctx.translate(size / 2, size / 2);
-
-        if (currentAnim !== 'none') {
-            applyAnimation(ctx, currentAnim, t, size);
-        }
-
-        ctx.drawImage(favicon, -size / 2, -size / 2, size, size);
-        ctx.restore();
-
-        if (currentAnim !== 'none' && ['glitch', 'fire', 'matrix', 'meltdown', 'possessed', 'static', 'hypnotic'].includes(currentAnim)) {
-            applyPostEffects(ctx, currentAnim, t, size);
-        }
-
-        frameIds[canvasId] = requestAnimationFrame(frame);
-    }
-
-    if (frameIds[canvasId]) cancelAnimationFrame(frameIds[canvasId]);
-    frame(performance.now());
-}
-
-// Favicon updater
-let lastUpdate = 0;
-function updateFavicon() {
-    const canvas = document.getElementById('preview-32');
-    const now = performance.now();
-    if (now - lastUpdate < 33) return; // 30fps limit
-    lastUpdate = now;
-
-    const dataUrl = canvas.toDataURL('image/png');
-    document.querySelectorAll("link[rel*='icon']").forEach(l => l.remove());
-    const link = document.createElement('link');
-    link.rel = 'icon';
-    link.type = 'image/png';
-    link.href = dataUrl;
-    document.head.appendChild(link);
-}
-
-function startFaviconLoop() {
-    function loop() {
-        updateFavicon();
-        requestAnimationFrame(loop);
-    }
-    loop();
-}
-
-// Set animation
-function setAnimation(id) {
-    const anim = animations.find(a => a.id === id);
-    currentAnim = id;
-
-    // Update buttons
-    document.querySelectorAll('#button-grid button, .card').forEach(b => b.classList.remove('active'));
-    document.querySelector(`#btn-${id}`)?.classList.add('active');
-    document.querySelector(`#card-${id}`)?.classList.add('active');
-
-    // Handle sound
-    stopSound();
-    if (anim?.sound) {
-        playSound(anim.sound);
+            ctx.putImageData(imgData, 0, 0);
+        } catch(e) {}
     }
 }
 
-// Build UI
-function buildUI() {
-    const btnGrid = document.getElementById('button-grid');
-    const cardGrid = document.getElementById('card-grid');
+// Main loop
+let lastFavUpdate = 0;
+function loop(ts) {
+    const t = ts / 1000 * speed;
 
-    animations.forEach(a => {
-        // Button
-        const btn = document.createElement('button');
-        btn.id = `btn-${a.id}`;
-        btn.textContent = a.name;
-        btn.onclick = () => setAnimation(a.id);
-        if (a.sound) btn.classList.add('has-sound');
-        if (a.id === 'none') btn.classList.add('active');
-        btnGrid.appendChild(btn);
-
-        // Card
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.id = `card-${a.id}`;
-        card.onclick = () => setAnimation(a.id);
-        if (a.id === 'none') card.classList.add('active');
-
-        const levelClass = { calm: 'badge-calm', medium: 'badge-medium', intense: 'badge-intense', chaos: 'badge-chaos' }[a.level];
-
-        card.innerHTML = `
-            <canvas id="preview-card-${a.id}" width="48" height="48"></canvas>
-            <h3>
-                <span class="badge ${levelClass}">${a.level}</span>
-                ${a.name}
-                ${a.sound ? '<span class="badge badge-sound">🔊</span>' : ''}
-            </h3>
-            <p>${a.desc}</p>
-        `;
-        cardGrid.appendChild(card);
+    [64, 32, 16].forEach(sz => {
+        const canvas = document.getElementById('preview-' + sz);
+        if (canvas) animate(canvas.getContext('2d'), current, t, sz);
     });
+
+    // Update favicon
+    if (ts - lastFavUpdate > 50) {
+        const c = document.getElementById('preview-32');
+        const url = c.toDataURL('image/png');
+        document.querySelectorAll("link[rel*='icon']").forEach(l => l.remove());
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.href = url;
+        document.head.appendChild(link);
+        lastFavUpdate = ts;
+    }
+
+    requestAnimationFrame(loop);
+}
+
+// UI
+function setAnim(id) {
+    const a = ANIMS.find(x => x.id === id);
+    current = id;
+
+    document.querySelectorAll('.btn-grid button').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + id).classList.add('active');
+    document.getElementById('current-name').textContent = a.name;
+
+    stopSound();
+    if (a.sound) playSound(a.sound);
 }
 
 // Init
-favicon.onload = () => {
-    buildUI();
-
-    // Start all card previews
-    animations.forEach(a => {
-        const canvas = document.getElementById(`preview-card-${a.id}`);
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            let start = performance.now();
-
-            function cardFrame(now) {
-                const t = (now - start) / 1000 * speed;
-                ctx.clearRect(0, 0, 48, 48);
-                ctx.save();
-                ctx.translate(24, 24);
-                if (a.id !== 'none') applyAnimation(ctx, a.id, t, 48);
-                ctx.drawImage(favicon, -24, -24, 48, 48);
-                ctx.restore();
-                if (a.id !== 'none' && ['glitch', 'fire', 'matrix', 'meltdown', 'possessed', 'static', 'hypnotic'].includes(a.id)) {
-                    applyPostEffects(ctx, a.id, t, 48);
-                }
-                requestAnimationFrame(cardFrame);
-            }
-            cardFrame(performance.now());
-        }
+img.onload = function() {
+    // Create buttons
+    const grid = document.getElementById('buttons');
+    ANIMS.forEach(a => {
+        const btn = document.createElement('button');
+        btn.id = 'btn-' + a.id;
+        btn.textContent = a.name;
+        btn.onclick = () => setAnim(a.id);
+        if (a.sound) btn.classList.add('sound');
+        if (a.chaos) btn.classList.add('chaos');
+        if (a.id === 'none') btn.classList.add('active');
+        grid.appendChild(btn);
     });
 
-    // Start main previews
-    animate('preview-16', 16);
-    animate('preview-32', 32);
-    animate('preview-64', 64);
-    startFaviconLoop();
+    // Draw initial
+    [64, 32, 16].forEach(sz => {
+        const c = document.getElementById('preview-' + sz);
+        c.getContext('2d').drawImage(img, 0, 0, sz, sz);
+    });
+
+    // Start loop
+    requestAnimationFrame(loop);
 };
 
-// Slider handlers
+img.onerror = function() {
+    alert('Failed to load favicon image!');
+};
+
+// Sliders
 document.getElementById('speed').oninput = e => {
     speed = parseFloat(e.target.value);
     document.getElementById('speed-val').textContent = speed.toFixed(1) + 'x';
@@ -738,12 +457,12 @@ document.getElementById('intensity').oninput = e => {
     document.getElementById('intensity-val').textContent = Math.round(intensity * 100) + '%';
 };
 document.getElementById('volume').oninput = e => {
-    updateVolume(parseFloat(e.target.value));
-    document.getElementById('volume-val').textContent = Math.round(e.target.value * 100) + '%';
+    volume = parseFloat(e.target.value);
+    document.getElementById('volume-val').textContent = Math.round(volume * 100) + '%';
+    if (soundNodes && soundNodes[soundNodes.length-1].gain) {
+        soundNodes[soundNodes.length-1].gain.value = volume * 0.4;
+    }
 };
-
-// Cleanup on leave
-window.onbeforeunload = () => stopSound();
 </script>
 </body>
 </html>
