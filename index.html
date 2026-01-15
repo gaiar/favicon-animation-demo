@@ -344,20 +344,23 @@ function animate(ctx, type, t, sz) {
             ctx.scale(hypScale, hypScale);
             break;
         case 'nightmare':
-            // TOTAL CHAOS - everything at once
-            const nx = (Math.random() - 0.5) * 20 * i;
-            const ny = (Math.random() - 0.5) * 20 * i;
-            const nRot = (Math.random() - 0.5) * Math.PI * i;
-            const nScale = 0.3 + Math.random() * 1.2;
-            const nSkewX = (Math.random() - 0.5) * 0.8;
-            const nSkewY = (Math.random() - 0.5) * 0.8;
-            ctx.translate(nx, ny);
-            ctx.rotate(nRot);
-            ctx.scale(nScale, nScale * (0.5 + Math.random()));
-            ctx.transform(1, nSkewX, nSkewY, 1, 0, 0);
-            ctx.globalAlpha = 0.2 + Math.random() * 0.8;
-            if (Math.random() < 0.3) ctx.scale(-1, 1); // Random flip
-            if (Math.random() < 0.2) ctx.scale(1, -1); // Random vertical flip
+            // TOTAL CHAOS - speed controls how many transforms, intensity controls magnitude
+            const chaosLoops = Math.ceil(speed * 1.5);
+            for (let c = 0; c < chaosLoops; c++) {
+                const nx = (Math.random() - 0.5) * 25 * i;
+                const ny = (Math.random() - 0.5) * 25 * i;
+                const nRot = (Math.random() - 0.5) * Math.PI * i * speed;
+                const nScale = 1 + (Math.random() - 0.5) * 1.5 * i;
+                const nSkewX = (Math.random() - 0.5) * i;
+                const nSkewY = (Math.random() - 0.5) * i;
+                ctx.translate(nx / chaosLoops, ny / chaosLoops);
+                ctx.rotate(nRot / chaosLoops);
+                ctx.scale(nScale, nScale * (0.7 + Math.random() * 0.6 * i));
+                ctx.transform(1, nSkewX / chaosLoops, nSkewY / chaosLoops, 1, 0, 0);
+            }
+            ctx.globalAlpha = Math.max(0.1, 1 - Math.random() * 0.8 * i);
+            if (Math.random() < 0.2 * i * speed) ctx.scale(-1, 1);
+            if (Math.random() < 0.15 * i * speed) ctx.scale(1, -1);
             break;
     }
 
@@ -445,13 +448,13 @@ function animate(ctx, type, t, sz) {
                     }
                 }
             } else if (type === 'nightmare') {
-                // Random extreme effect each frame - more effects at higher intensity
-                const numEffects = Math.ceil(i * 2);
+                // Speed controls number of effects, intensity controls their magnitude
+                const numEffects = Math.ceil(speed * i * 2);
                 for (let e = 0; e < numEffects; e++) {
                     const effect = Math.floor(Math.random() * 6);
                     switch(effect) {
                         case 0: // Full invert
-                            if (Math.random() < 0.3 + 0.4 * i) {
+                            if (Math.random() < 0.2 + 0.3 * i * speed) {
                                 for (let j = 0; j < d.length; j += 4) {
                                     d[j] = 255 - d[j];
                                     d[j+1] = 255 - d[j+1];
@@ -460,7 +463,7 @@ function animate(ctx, type, t, sz) {
                             }
                             break;
                         case 1: // Extreme color shift
-                            const hue = Math.random() * 360;
+                            const hue = Math.random() * 360 * speed;
                             for (let j = 0; j < d.length; j += 4) {
                                 const temp = d[j];
                                 d[j] = d[j + (Math.floor(hue/120) % 3)];
@@ -468,24 +471,24 @@ function animate(ctx, type, t, sz) {
                                 d[j+2] = temp;
                             }
                             break;
-                        case 2: // Posterize - threshold varies with intensity
-                            const threshold = Math.floor(256 / (1 + i * 2));
+                        case 2: // Posterize - threshold varies with intensity and speed
+                            const threshold = Math.max(1, Math.floor(256 / (1 + i * speed * 3)));
                             for (let j = 0; j < d.length; j += 4) {
                                 d[j] = Math.floor(d[j] / threshold) * threshold;
                                 d[j+1] = Math.floor(d[j+1] / threshold) * threshold;
                                 d[j+2] = Math.floor(d[j+2] / threshold) * threshold;
                             }
                             break;
-                        case 3: // Channel chaos - shift increases with intensity
-                            const shift = Math.floor(Math.random() * 20 * i + 5);
+                        case 3: // Channel chaos - shift scales with speed and intensity
+                            const shift = Math.floor(Math.random() * 25 * i * speed + 3);
                             for (let j = 0; j < d.length - shift*4; j += 4) {
                                 d[j] = d[j + shift * 4];
                                 d[j+2] = d[Math.max(0, j - shift * 4) + 2];
                             }
                             break;
-                        case 4: // Scanline hell - more lines at higher intensity
+                        case 4: // Scanline hell - density scales with speed and intensity
                             for (let y = 0; y < sz; y++) {
-                                if (Math.random() < 0.15 + 0.25 * i) {
+                                if (Math.random() < 0.1 + 0.3 * i * speed) {
                                     for (let x = 0; x < sz; x++) {
                                         const idx = (y * sz + x) * 4;
                                         const v = Math.random() * 255;
@@ -494,8 +497,8 @@ function animate(ctx, type, t, sz) {
                                 }
                             }
                             break;
-                        case 5: // Noise blast - more pixels affected at higher intensity
-                            const noiseChance = 0.2 + 0.4 * i;
+                        case 5: // Noise blast - coverage scales with speed and intensity
+                            const noiseChance = 0.15 + 0.35 * i * speed;
                             for (let j = 0; j < d.length; j += 4) {
                                 if (Math.random() < noiseChance) {
                                     d[j] = Math.random() * 255;
